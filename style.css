@@ -1,0 +1,142 @@
+:root {
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --bg-gradient: linear-gradient(135deg, #0f172a, #1e293b);
+    --card-bg: #1e293b;
+    --text: #f8fafc;
+    --sucesso: #16a34a;
+    --erro: #dc2626;
+    --alerta: #d97706;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: var(--bg-gradient);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    width: 100%;
+    max-width: 700px;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    border: 1px solid #334155;
+}
+
+h1 { font-size: 2.5rem; color: #f59e0b; margin-bottom: 10px; }
+h2 { font-size: 1.5rem; margin-bottom: 20px; color: #38bdf8; }
+.creditos { color: #94a3b8; font-size: 0.9rem; margin-bottom: 30px; }
+
+.form-grupo {
+    margin-bottom: 20px;
+    text-align: left;
+}
+.form-grupo label { display: block; margin-bottom: 8px; color: #cbd5e1; }
+.form-grupo input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #475569;
+    background-color: #0f172a;
+    color: white;
+    font-size: 1rem;
+}
+
+.btn {
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+.btn:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+
+.menu-botoes { display: flex; flex-direction: column; gap: 15px; }
+.btn-nivel { background-color: #334155; }
+.btn-nivel:hover { background-color: #475569; }
+
+/* PLACAR */
+.placar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #0f172a;
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    border: 2px solid #334155;
+}
+.placar-bloco { display: flex; flex-direction: column; font-weight: bold; }
+.pontos { font-size: 2rem; color: #f59e0b; }
+.divisor-placar { font-size: 1.2rem; color: #64748b; }
+
+/* STATUS E TURNO */
+.status-barra {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+    background: #0f172a;
+    padding: 8px 15px;
+    border-radius: 6px;
+}
+.turno-destaque { color: #a855f7; font-weight: bold; }
+.status-badge { background-color: var(--alerta); padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; }
+
+/* PERGUNTA E OPÇÕES */
+.pergunta-box { margin-bottom: 25px; text-align: left; background: #0f172a; padding: 20px; border-radius: 10px; border-left: 5px solid #38bdf8; }
+#jogo-pergunta { font-size: 1.15rem; line-height: 1.6; }
+.dica-container { margin-top: 15px; background: rgba(217, 119, 6, 0.1); border: 1px dashed var(--alerta); padding: 10px; border-radius: 6px; font-size: 0.9rem; }
+
+.opcoes-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
+.btn-opcao { background-color: #1e293b; border: 1px solid #475569; text-align: left; font-weight: normal; }
+.btn-opcao:hover { background-color: #334155; }
+
+/* PAINEL DE AÇÕES DO PASSA OU REPASSA */
+.acoes-grid { display: flex; gap: 15px; }
+.btn-acao-passa { background-color: #4b5563; }
+.btn-acao-dica { background-color: #d97706; }
+.btn-acao-repassa { background-color: #b91c1c; animation: tremer 0.3s infinite; }
+
+/* FEEDBACK BOX */
+.feedback-escondido { display: none; }
+.feedback-box { padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: bold; }
+.feedback-box.sucesso { background-color: rgba(22, 163, 74, 0.2); border: 1px solid var(--sucesso); color: #4ade80; }
+.feedback-box.erro { background-color: rgba(220, 38, 38, 0.2); border: 1px solid var(--erro); color: #f87171; }
+
+@keyframes tremer {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(0px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(2px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(2px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
+}

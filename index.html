@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passa ou Repassa - Acentuação</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-gradient: linear-gradient(135deg, #0f172a, #1e293b);
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --sucesso: #16a34a;
+            --erro: #dc2626;
+            --alerta: #d97706;
+            --desempate: #a855f7;
+            --ajuda: #0284c7;
+            --ajuda-hover: #0369a1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            border: 1px solid #334155;
+        }
+
+        h1 { font-size: 2.5rem; color: #f59e0b; margin-bottom: 10px; }
+        h2 { font-size: 1.5rem; margin-bottom: 20px; color: #38bdf8; }
+        .creditos { color: #94a3b8; font-size: 0.9rem; margin-bottom: 30px; }
+
+        .form-grupo {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-grupo label { display: block; margin-bottom: 8px; color: #cbd5e1; }
+        .form-grupo input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background-color: #0f172a;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .btn:hover { background-color: var(--primary-hover); transform: translateY(-2px); }
+
+        .menu-botoes { display: flex; flex-direction: column; gap: 15px; }
+        .btn-nivel { background-color: #334155; }
+        .btn-nivel:hover { background-color: #475569; }
+        
+        .btn-ajuda { background-color: var(--ajuda); margin-bottom: 5px; }
+        .btn-ajuda:hover { background-color: var(--ajuda-hover); }
+
+        /* PAINEL DO VÍDEO DE AJUDA */
+        .video-panel {
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            margin-bottom: 20px;
+        }
+        video {
+            width: 100%;
+            border-radius: 8px;
+            background-color: #000;
+        }
+
+        /* PLACAR */
+        .placar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background-color: #0f172a;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 2px solid #334155;
+        }
+        .placar-bloco { display: flex; flex-direction: column; font-weight: bold; }
+        .pontos { font-size: 2rem; color: #f59e0b; }
+        .divisor-placar { font-size: 1.2rem; color: #64748b; }
+
+        /* STATUS E TURNO */
+        .status-barra {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+            background: #0f172a;
+            padding: 8px 15px;
+            border-radius: 6px;
+        }
+        .turno-destaque { color: #a855f7; font-weight: bold; }
+        .status-badge { background-color: var(--alerta); padding: 3px 8px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; }
+        .status-badge.desempate-badge { background-color: var(--desempate); }
+
+        /* PERGUNTA E OPÇÕES */
+        .pergunta-box { margin-bottom: 25px; text-align: left; background: #0f172a; padding: 20px; border-radius: 10px; border-left: 5px solid #38bdf8; }
+        .pergunta-box.desempate-box { border-left: 5px solid var(--desempate); }
+        #jogo-pergunta { font-size: 1.15rem; line-height: 1.6; }
+        .dica-container { margin-top: 15px; background: rgba(217, 119, 6, 0.1); border: 1px dashed var(--alerta); padding: 10px; border-radius: 6px; font-size: 0.9rem; }
+
+        .opcoes-container { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px; }
+        .btn-opcao { background-color: #1e293b; border: 1px solid #475569; text-align: left; font-weight: normal; color: white;}
+        .btn-opcao:hover { background-color: #334155; }
+
+        /* PAINEL DE AÇÕES DO PASSA OU REPASSA */
+        .acoes-grid { display: flex; gap: 15px; }
+        .btn-acao-passa { background-color: #4b5563; }
+        .btn-acao-dica { background-color: #d97706; }
+        .btn-acao-repay { background-color: #b91c1c; }
+
+        /* FEEDBACK BOX */
+        .feedback-escondido { display: none; }
+        .feedback-box { padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: bold; }
+        .feedback-box.sucesso { background-color: rgba(22, 163, 74, 0.2); border: 1px solid var(--sucesso); color: #4ade80; display: block; }
+        .feedback-box.erro { background-color: rgba(220, 38, 38, 0.2); border: 1px solid var(--erro); color: #f87171; display: block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="tela-registro" class="card">
+            <h1>🎭 PASSA OU REPASSA 🎭</h1>
+            <h2>Os Acentos Perdidos</h2>
+            <p class="creditos">Por: Ryan Coutinho e Ana Beatriz Magalhães - 9º A 🎓</p>
+            
+            <div class="form-grupo">
+                <label for="equipe1">Nome da Equipe 1:</label>
+                <input type="text" id="equipe1" placeholder="Ex: Alfa" value="Equipe A">
+            </div>
+            <div class="form-grupo">
+                <label for="equipe2">Nome da Equipe 2:</label>
+                <input type="text" id="equipe2" placeholder="Ex: Beta" value="Equipe B">
+            </div>
+            
+            <button class="btn" onclick="registrarEquipes()">Iniciar Confronto 🚀</button>
+        </div>
+
+        <!-- TELA MENU COM SELEÇÃO DE NÍVEL E VÍDEO DE AJUDA -->
+        <div id="tela-menu" class="card" style="display: none;">
+            <h2>Escolha o Nível do Confronto</h2>
+            <div style="font-size: 1.2rem; margin-bottom: 20px; font-weight: bold; color: #f59e0b;">
+                <span id="menu-e1"></span> VS <span id="menu-e2"></span>
+            </div>
+
+            <!-- Painel do vídeo (oculto por padrão) -->
+            <div id="painel-video" class="video-panel" style="display: none;">
+                <video id="video-player" controls>
+                    <source src="Regras_de_Acentuação.mp4" type="video/mp4">
+                    Seu navegador não suporta a tag de vídeo. Verifique se o arquivo "Regras_de_Acentuação.mp4" está na mesma pasta.
+                </video>
+                <button class="btn btn-nivel" style="margin-top: 10px; padding: 8px; font-size: 0.9rem;" onclick="controlarVideo(false)">Fechar Vídeo ❌</button>
+            </div>
+
+            <div class="menu-botoes">
+                <button class="btn btn-ajuda" onclick="controlarVideo(true)">📺 Vídeo de Ajuda</button>
+                <button class="btn btn-nivel" onclick="escolherNivel('facil')">Nível Fácil - Oxítonas Desesperadas</button>
+                <button class="btn btn-nivel" onclick="escolherNivel('medio')">Nível Médio - As Revoltadas Paroxítonas</button>
+                <button class="btn btn-nivel" onclick="escolherNivel('dificil')">Nível Difícil - A Ditadura Proparoxítona</button>
+            </div>
+        </div>
+
+        <div id="tela-jogo" class="card" style="display: none;">
+            <div class="placar">
+                <div class="placar-bloco">
+                    <span id="placar-nome-e1">Equipe 1</span>
+                    <span id="placar-pontos-e1" class="pontos">0</span>
+                </div>
+                <div class="divisor-placar">VS</div>
+                <div class="placar-bloco">
+                    <span id="placar-nome-e2">Equipe 2</span>
+                    <span id="placar-pontos-e2" class="pontos">0</span>
+                </div>
+            </div>
+
+            <div class="status-barra">
+                <span id="jogo-nivel-titulo">Nível</span>
+                <span id="jogo-turno-equipe" class="turno-destaque">Vez de: </span>
+                <span id="jogo-status-pergunta" class="status-badge">NORMAL</span>
+            </div>
+
+            <div id="pergunta-box-el" class="pergunta-box">
+                <p id="jogo-pergunta">Carregando pergunta...</p>
+                <div id="dica-box" class="dica-container" style="display: none;">
+                    💡 <strong>Diretriz:</strong> <span id="jogo-dica-texto"></span>
+                </div>
+            </div>
+
+            <div id="jogo-opcoes" class="opcoes-container"></div>
+
+            <div id="feedback-box" class="feedback-escondido">
+                <span id="feedback-emoji" style="font-size: 2rem;"></span>
+                <p id="feedback-mensagem" style="margin-top: 5px;"></p>
+            </div>
+
+            <div id="acoes-painel" class="acoes-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        const PERGUNTAS = {
+            "facil": {
+                "titulo": "Nível Fácil: As Oxítonas Desesperadas",
+                "contexto": "Oxítonas levam acento quando terminam em A, E, O (seguidas ou não de S), EM e ENS. O resto fica sem nada!",
+                "questoes": [
+                    {"pergunta": "O herói da quebrada, o 'Café', perdeu o acento e virou 'Cafe'. Como ele recupera o seu brilho?", "opcoes": ["Colocando acento agudo porque termina em 'E'.", "Deixando sem acento, afinal café puro não precisa de teto.", "Colocando acento circunflexo para virar 'Cafê'."], "correta": 0},
+                    {"pergunta": "A palavra 'Parabéns' está numa festa. Por que ela usa um acento agudo elegante?", "opcoes": ["Keep porque termina em 'ENS'.", "Porque é véspera de feriado.", "Para não ser confundida com 'parabens' sem graça."], "correta": 0},
+                    {"pergunta": "A palavra 'Caju' tentou entrar na área VIP do acento. Por que ela foi barrada na porta?", "opcoes": ["Because colocou 'U' e oxítonas em 'U' não têm direito a acento.", "Porque o segurança não gostava de suco de caju.", "Porque ela esqueceu o RG gramatical."], "correta": 0},
+                    {"pergunta": "O 'Sofá' desmaiou de cansaço. Qual o remédio ortográfico para ele?", "opcoes": ["Acento agudo no 'A'.", "Um travesseiro novo.", "Deixá-lo como 'Sofa'."], "correta": 0},
+                    {"pergunta": "A palavra 'Também' está num dilema. Ela precisa de acento?", "opcoes": ["Sim, agudo no 'E' porque termina em 'EM'.", "Não, ela é humilde e prefere ficar sem.", "Apenas se estiver no início da frase."], "correta": 0}
+                ]
+            },
+            "medio": {
+                "titulo": "Nível Médio: A Revolta das Paroxítonas",
+                "contexto": "Paroxítonas SÓ levam acento se NÃO terminarem em A, E, O, EM, ENS. E atenção aos ditongos que caíram com o Novo Acordo!",
+                "questoes": [
+                    {"pergunta": "A palavra 'Ideia' perdeu o acento com o Novo Acordo Ortográfico. Por que os ditongos abertos (ei, oi) nas paroxítonas perderam o chapéu?", "opcoes": ["O acento escorregou devido à pressa da digitação moderna.", "O Novo Acordo achou que elas já eram famosas demais e confiscou o acessório.", "Ditongos abertos em palavras paroxítonas perderam o acento para dar descanso aos estudantes."], "correta": 2},
+                    {"pergunta": "A palavra 'Fácil' anda muito orgulhosa. Por que ela tem acento?", "opcoes": ["Porque é uma paroxítona terminada em 'L'.", "Because o antônimo 'Difícil' também tem.", "Porque ela quer humilhar as palavras difíceis."], "correta": 0},
+                    {"pergunta": "O 'Caráter' de uma palavra é tudo. Por que ela é acentuada?", "opcoes": ["Porque termina em 'R'.", "Porque é uma palavra séria.", "Porque sim e não se discute."], "correta": 0},
+                    {"pergunta": "A palavra 'Mesa' está triste porque não tem acento. Qual o motivo?", "opcoes": ["Termina em 'A', por isso paroxítonas assim não ganham acento.", "Ela prefere uma toalha a um acento.", "Esqueceram-se dela na fábrica."], "correta": 0},
+                    {"pergunta": "O 'Tórax' foi ao médico gramatical. O diagnóstico diz que ele precisa de acento porquê?", "opcoes": ["Porque termina em 'X'.", "Porque protege os pulmões da língua.", "O 'X' exige o uso do acento agudo."], "correta": 0}
+                ]
+            },
+            "dificil": {
+                "titulo": "Nível Difícil: A Ditadura das Proparoxítonas",
+                "contexto": "Regra Suprema e Absoluta: TODAS as proparoxítonas são acentuadas. Sem exceção!",
+                "questoes": [
+                    {"pergunta": "A palavra 'Lâmpada' está organizando um golpe no dicionário. Qual é o lema oficial do partido delas?", "opcoes": ["'A igualdade é para todas: sílaba forte na antepenúltima leva acento e ponto final!'", "'Apenas algumas escolhidas merecem o topo.'", "'Quem tem acento manda, quem não tem é plebeu.'"], "correta": 0},
+                    {"pergunta": "A palavra 'Médico' examinou o dicionário. Qual a receita que ele passou?", "opcoes": ["Acentuar todas as proparoxítonas para evitar doenças na língua.", "Tomar duas pílulas de gramática.", "Retirar o acento para ver se melhora."], "correta": 0},
+                    {"pergunta": "Se encontrares uma proparoxítona sem acento na rua, o que deves fazer?", "opcoes": ["Chamar a polícia gramatical, porque isso é um crime!", "Ignorar, ela deve estar disfarçada.", "Dar um abraço nela."], "correta": 0},
+                    {"pergunta": "A palavra 'Público' está cheia de gente. O que todos têm em comum?", "opcoes": ["Todos respeitam o acento na antepenúltima sílaba.", "Todos esqueceram os óculos.", "Estão ali para ver a paródia."], "correta": 0},
+                    {"pergunta": "A palavra 'Árvore' cresceu muito na floresta. O que brilha no topo dela?", "opcoes": ["O acento agudo no 'Á'.", "Uma maçã.", "Um passarinho."], "correta": 2}
+                ]
+            },
+            "desempate": {
+                "titulo": "⚡ RODADA DE DESEMPATE MÁXIMO ⚡",
+                "contexto": "No desempate, cada acerto decide o jogo! Fique atento às pegadinhas mais profundas da acentuação.",
+                "questoes": [
+                    {"pergunta": "[DESEMPATE] Por que a palavra 'Baú' é acentuada?", "opcoes": ["Porque as letras 'I' e 'U' tônicas em hiato, sozinhas na sílaba, recebem acento.", "Porque termina com a letra 'U'.", "Porque é uma proparoxítona disfarçada."], "correta": 0},
+                    {"pergunta": "[DESEMPATE] Qual das alternativas abaixo apresenta TODAS as palavras acentuadas corretamente?", "opcoes": ["Pólo, herói, assembléia", "Voo, jiboia, troféu", "Ímã, orfã, rítmo"], "correta": 1},
+                    {"pergunta": "[DESEMPATE] A palavra 'Piauí' tem acento por qual motivo?", "opcoes": ["Regra especial do hiato onde o 'I' forma sílaba sozinho precedido de ditongo.", "Por ser uma oxítona terminada em 'I'.", "Porque todas as palavras que indicam estados brasileiros são acentuadas."], "correta": 0},
+                    {"pergunta": "[DESEMPATE] O termo 'Guaíba' recebe acento pelo mesmo motivo que:", "opcoes": ["Saúde", "Tênis", "Vovó"], "correta": 0},
+                    {"pergunta": "[DESEMPATE] Qual palavra perdeu o acento com as mudanças do Novo Acordo?", "opcoes": ["Chapéu", "Heroico", "Pajé"], "correta": 1}
+                ]
+            }
+        };
+
+        let estado = {
+            equipe1: "",
+            equipe2: "",
+            pontos: {},
+            nivel_atual: "",
+            pergunta_index: 0,
+            equipe_atual: "",
+            outra_equipe: "",
+            estado_pergunta: "normal", 
+            usou_dica: false,
+            travado: false,
+            modo_desempate: false,
+            desempate_index: 0
+        };
+
+        function registrarEquipes() {
+            estado.equipe1 = document.getElementById('equipe1').value.trim() || "Equipe A";
+            estado.equipe2 = document.getElementById('equipe2').value.trim() || "Equipe B";
+            estado.pontos[estado.equipe1] = 0;
+            estado.pontos[estado.equipe2] = 0;
+
+            document.getElementById('menu-e1').innerText = estado.equipe1.toUpperCase();
+            document.getElementById('menu-e2').innerText = estado.equipe2.toUpperCase();
+
+            document.getElementById('tela-registro').style.display = 'none';
+            document.getElementById('tela-menu').style.display = 'block';
+        }
+
+        // FUNÇÃO DE MOSTRAR / ESCONDER O VÍDEO
+        function controlarVideo(abrir) {
+            const painel = document.getElementById('painel-video');
+            const video = document.getElementById('video-player');
+            if (abrir) {
+                painel.style.display = 'block';
+            } else {
+                painel.style.display = 'none';
+                video.pause(); // Pausa o vídeo se clicar em fechar
+            }
+        }
+
+        function escolherNivel(nivel) {
+            // Garante que o vídeo pare se o jogo começar
+            document.getElementById('video-player').pause();
+            document.getElementById('painel-video').style.display = 'none';
+
+            estado.nivel_atual = nivel;
+            estado.pergunta_index = 0;
+            estado.equipe_atual = estado.equipe1;
+            estado.outra_equipe = estado.equipe2;
+            estado.estado_pergunta = "normal";
+            estado.usou_dica = false;
+            estado.travado = false;
+            estado.modo_desempate = false;
+            estado.desempate_index = 0;
+
+            estado.pontos[estado.equipe1] = 0;
+            estado.pontos[estado.equipe2] = 0;
+
+            document.getElementById('tela-menu').style.display = 'none';
+            document.getElementById('tela-jogo').style.display = 'block';
+            
+            document.getElementById('pergunta-box-el').className = "pergunta-box";
+            document.getElementById('jogo-status-pergunta').className = "status-badge";
+
+            atualizarInterface();
+        }
+
+        function alternarTurnos() {
+            let temp = estado.equipe_atual;
+            estado.equipe_atual = estado.outra_equipe;
+            estado.outra_equipe = temp;
+        }
+
+        function atualizarInterface() {
+            document.getElementById('placar-nome-e1').innerText = estado.equipe1;
+            document.getElementById('placar-nome-e2').innerText = estado.equipe2;
+            document.getElementById('placar-pontos-e1').innerText = estado.pontos[estado.equipe1];
+            document.getElementById('placar-pontos-e2').innerText = estado.pontos[estado.equipe2];
+
+            let dadosNivel = PERGUNTAS[estado.nivel_atual];
+            let questao;
+
+            if (estado.modo_desempate) {
+                dadosNivel = PERGUNTAS["desempate"];
+                if (estado.desempate_index >= dadosNivel.questoes.length) {
+                    finalizarConfronto(PERGUNTAS[estado.nivel_atual].titulo);
+                    return;
+                }
+                questao = dadosNivel.questoes[estado.desempate_index];
+                
+                document.getElementById('jogo-nivel-titulo').innerText = `${dadosNivel.titulo} (Pergunta ${estado.desempate_index + 1})`;
+                document.getElementById('pergunta-box-el').className = "pergunta-box desempate-box";
+                document.getElementById('jogo-status-pergunta').className = "status-badge desempate-badge";
+                document.getElementById('jogo-status-pergunta').innerText = "DESEMPATE";
+            } else {
+                if (estado.pergunta_index >= dadosNivel.questoes.length) {
+                    if (estado.pontos[estado.equipe1] === estado.pontos[estado.equipe2]) {
+                        ativarModoDesempate();
+                        return;
+                    } else {
+                        finalizarConfronto(dadosNivel.titulo);
+                        return;
+                    }
+                }
+                questao = dadosNivel.questoes[estado.pergunta_index];
+                document.getElementById('jogo-nivel-titulo').innerText = `${dadosNivel.titulo} (${estado.pergunta_index + 1}/${dadosNivel.questoes.length})`;
+                document.getElementById('jogo-status-pergunta').innerText = estado.estado_pergunta.toUpperCase();
+            }
+
+            document.getElementById('jogo-turno-equipe').innerText = `Vez de: ${estado.equipe_atual.toUpperCase()}`;
+            document.getElementById('jogo-pergunta').innerText = questao.pergunta;
+
+            const dicaBox = document.getElementById('dica-box');
+            if (estado.usou_dica) {
+                dicaBox.style.display = 'block';
+                document.getElementById('jogo-dica-texto').innerText = dadosNivel.contexto;
+            } else if (estado.estado_pergunta === "repassou") {
+                dicaBox.style.display = 'block';
+                document.getElementById('jogo-dica-texto').innerText = "🔒 Dica bloqueada no repasse! Responda sem auxílio.";
+            } else {
+                dicaBox.style.display = 'none';
+            }
+
+            const containerOpcoes = document.getElementById('jogo-opcoes');
+            containerOpcoes.innerHTML = "";
+            questao.opcoes.forEach((opcao, index) => {
+                containerOpcoes.innerHTML += `
+                    <button class="btn btn-opcao" onclick="fazerJogada('resposta', ${index})" ${estado.travado ? 'disabled' : ''}>
+                        ${index + 1}. ${opcao}
+                    </button>
+                `;
+            });
+
+            const painel = document.getElementById('acoes-painel');
+            painel.innerHTML = "";
+
+            if (!estado.travado) {
+                if (!estado.modo_desempate) {
+                    if (estado.estado_pergunta === "normal" && !estado.usou_dica) {
+                        painel.innerHTML += `<button class="btn btn-acao-passa" onclick="fazerJogada('passa')">Passar ➡️</button>`;
+                        painel.innerHTML += `<button class="btn btn-acao-dica" onclick="fazerJogada('dica')">Pedir Dica 💡</button>`;
+                    } else if (estado.estado_pergunta === "passou") {
+                        painel.innerHTML += `<button class="btn btn-acao-repassa" onclick="fazerJogada('repassa')">Repassar 💥</button>`;
+                    }
+                } else {
+                    painel.innerHTML += `<div style="width:100%; text-align:center; color:#c084fc; font-weight:bold; font-size:0.9rem;">Morte Súbita! Acertou pontua, errou passa a chance da vitória.</div>`;
+                }
+            }
+        }
+
+        function activarModoDesempate() {
+            estado.modo_desempate = true;
+            estado.desempate_index = 0;
+            estado.estado_pergunta = "normal";
+            estado.usou_dica = false;
+            estado.travado = true;
+
+            const fb = document.getElementById('feedback-box');
+            const emoji = document.getElementById('feedback-emoji');
+            const msg = document.getElementById('feedback-mensagem');
+            
+            fb.className = "feedback-box";
+            fb.style.backgroundColor = "rgba(168, 85, 247, 0.2)";
+            fb.style.border = "1px solid var(--desempate)";
+            fb.style.color = "#d8b4fe";
+            emoji.innerText = "⚡";
+            msg.innerText = "TEMOS UM EMPATE! Iniciando Rodada de Desempate por Morte Súbita!";
+
+            setTimeout(() => {
+                fb.className = "feedback-escondido";
+                fb.style.backgroundColor = "";
+                fb.style.border = "";
+                fb.style.color = "";
+                estado.travado = false;
+                atualizarInterface();
+            }, 3500);
+        }
+
+        function fazerJogada(acao, valor = null) {
+            if (estado.travado) return;
+
+            if (acao === 'dica') {
+                estado.usou_dica = true;
+                atualizarInterface();
+                return;
+            }
+
+            if (acao === 'passa') {
+                estado.estado_pergunta = "passou";
+                alternarTurnos();
+                atualizarInterface();
+                return;
+            }
+
+            if (acao === 'repassa') {
+                estado.estado_pergunta = "repassou";
+                alternarTurnos();
+                atualizarInterface();
+                return;
+            }
+
+            if (acao === 'resposta') {
+                estado.travado = true;
+                const dadosNivel = estado.modo_desempate ? PERGUNTAS["desempate"] : PERGUNTAS[estado.nivel_atual];
+                const questao = dadosNivel.questoes[estado.modo_desempate ? estado.desempate_index : estado.pergunta_index];
+                const fb = document.getElementById('feedback-box');
+                const emoji = document.getElementById('feedback-emoji');
+                const msg = document.getElementById('feedback-mensagem');
+
+                if (valor === questao.correta) {
+                    estado.pontos[estado.equipe_atual] += 1;
+                    fb.className = "feedback-box sucesso";
+                    emoji.innerText = "🎉";
+                    msg.innerText = `Sensacional! Ponto para a equipe ${estado.equipe_atual}!`;
+                    
+                    if (estado.modo_desempate) {
+                        completarRodadaDesempate(true);
+                    } else {
+                        avancarProximaPergunta();
+                    }
+                } else {
+                    if (estado.modo_desempate) {
+                        estado.pontos[estado.outra_equipe] += 1;
+                        fb.className = "feedback-box erro";
+                        emoji.innerText = "❌";
+                        msg.innerText = `Errou! O ponto de desempate vai para a outra equipe (${estado.outra_equipe})!`;
+                        
+                        completarRodadaDesempate(false);
+                    } else {
+                        if (estado.estado_pergunta === "normal" && !estado.usou_dica) {
+                            estado.estado_pergunta = "passou";
+                            alternarTurnos();
+                            fb.className = "feedback-box erro";
+                            emoji.innerText = "❌";
+                            msg.innerText = `Errou! A pergunta foi passada automaticamente para a outra equipe!`;
+                            
+                            estado.travado = false;
+                            setTimeout(() => {
+                                fb.className = "feedback-escondido";
+                                atualizarInterface();
+                            }, 2500);
+                        } else {
+                            fb.className = "feedback-box erro";
+                            emoji.innerText = "📉";
+                            msg.innerText = `Errou! Ninguém pontua nesta rodada!`;
+                            
+                            avancarProximaPergunta();
+                        }
+                    }
+                }
+            }
+        }
+
+        function completarRodadaDesempate(foiAcerto) {
+            setTimeout(() => {
+                document.getElementById('feedback-box').className = "feedback-escondido";
+                if (estado.pontos[estado.equipe1] !== estado.pontos[estado.equipe2]) {
+                    finalizarConfronto(PERGUNTAS[estado.nivel_atual].titulo);
+                } else {
+                    estado.desempate_index += 1;
+                    alternarTurnos(); 
+                    estado.travado = false;
+                    atualizarInterface();
+                }
+            }, 3000);
+        }
+
+        function avancarProximaPergunta() {
+            estado.pergunta_index += 1;
+            estado.estado_pergunta = "normal";
+            estado.usou_dica = false;
+
+            if (estado.pergunta_index % 2 === 0) {
+                estado.equipe_atual = estado.equipe1;
+                estado.outra_equipe = estado.equipe2;
+            } else {
+                estado.equipe_atual = estado.equipe2;
+                estado.outra_equipe = estado.equipe1;
+            }
+
+            setTimeout(() => {
+                document.getElementById('feedback-box').className = "feedback-escondido";
+                estado.travado = false;
+                atualizarInterface();
+            }, 3000);
+        }
+
+        function finalizarConfronto(tituloNivel) {
+            document.getElementById('jogo-pergunta').innerText = "Fim do Confronto!";
+            document.getElementById('jogo-opcoes').innerHTML = "";
+            document.getElementById('dica-box').style.display = 'none';
+            
+            let mensagemFinal = `Ryan Coutinho e Ana parabenizam as duas equipes!\n\nPlacar Final no ${tituloNivel}:\n» ${estado.equipe1}: ${estado.pontos[estado.equipe1]} pts\n» ${estado.equipe2}: ${estado.pontos[estado.equipe2]} pts\n\n`;
+            
+            if (estado.pontos[estado.equipe1] > estado.pontos[estado.equipe2]) {
+                mensagemFinal += `🥇 VITÓRIA DA EQUIPE ${estado.equipe1.toUpperCase()}! 🎉`;
+            } else if (estado.pontos[estado.equipe2] > estado.pontos[estado.equipe1]) {
+                mensagemFinal += `🥇 VITÓRIA DA EQUIPE ${estado.equipe2.toUpperCase()}! 🎉`;
+            } else {
+                mensagemFinal += `🤝 EMPATE INCRÍVEL!`;
+            }
+            
+            const fb = document.getElementById('feedback-box');
+            fb.className = "feedback-box sucesso";
+            document.getElementById('feedback-emoji').innerText = "🏆";
+            document.getElementById('feedback-mensagem').innerText = mensagemFinal;
+
+            document.getElementById('acoes-painel').innerHTML = `
+                <button class="btn" onclick="voltarMenu()">Voltar ao Menu Principal 🏠</button>
+            `;
+        }
+
+        function voltarMenu() {
+            document.getElementById('feedback-box').className = "feedback-escondido";
+            document.getElementById('tela-jogo').style.display = 'none';
+            document.getElementById('tela-menu').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
